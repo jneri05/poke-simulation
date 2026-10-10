@@ -1,0 +1,71 @@
+---
+title: "Pokémon Simulation"
+author: "Jose Ramirez"
+date: "2026-9-15"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Trials
+
+```{r simple}
+#Vector from which we will sample randomly with similar odds
+pack = c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,3,3,3,3,4)
+
+n = 10000
+results = numeric(n)
+
+for (i in 1:n) {
+  trial = sample(pack, 1, replace=TRUE)
+  results[i] = trial
+}
+
+access_table = table(results)
+access_table
+```
+
+## Proportions
+
+```{r proportionsPoke}
+prop1 = access_table["1"] / n
+prop2 = access_table["2"] / n
+prop3 = access_table["3"] / n
+
+prop4 = access_table["4"] / n
+
+cat("Proportion of category 1: ", prop1, "\n",
+    "Proportion of category 2: ", prop2, "\n",
+    "Proportion of category 3: ", prop3, "\n",
+    "Proportion of category 4: ", prop4, "\n", sep="")
+```
+
+## Total Cost
+
+```{r costPoke}
+cost_pack = 5.5
+tot_cost = cost_pack * n
+
+return_val = (sum(access_table["3"]) * 5) + (sum(access_table["4"]) * 30)
+
+net = return_val - tot_cost
+
+cat("Total cost of all packs: $", tot_cost, "\n",
+    "Estimated return from profitable packs: $", return_val, "\n",
+    "Our net profit from 10000 packs is: $", net, "\n", sep="")
+```
+
+## Visualization
+
+```{r visualPoke}
+#running net profit across all pack openings
+payout = ifelse(results == 3, 6, ifelse(results == 4, 30, 0))
+cum_net = cumsum(payout - cost_pack)
+
+plot(cum_net, type = "l", col = "red", lwd = 2,
+     xlab = "Packs opened", ylab = "Net profit ($)",
+     main = "Cumulative Net Profit")
+abline(h = 0, lty = 2)
+```
